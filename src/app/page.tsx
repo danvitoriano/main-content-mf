@@ -1,103 +1,134 @@
-import Image from "next/image";
+'use client'
+import React from 'react'
+import { 
+  Paper, 
+  Typography, 
+  Card, 
+  CardContent, 
+  CardMedia, 
+  Box,
+  Button,
+  Chip,
+  ThemeProvider,
+  createTheme
+} from '@mui/material'
+import { Code, Web, Settings } from '@mui/icons-material'
 
-export default function Home() {
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+  },
+})
+
+export default function MainContentMicroFrontend() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ padding: 3 }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+          Bem-vindo ao Micro-Frontend
+        </Typography>
+        
+        <Typography variant="h6" paragraph sx={{ color: '#666', mb: 4 }}>
+          Esta é uma aplicação demonstrativa usando arquitetura de micro-frontends com Next.js e Single-SPA
+        </Typography>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
+          <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardMedia
+                component="div"
+                sx={{
+                  height: 200,
+                  backgroundColor: '#e3f2fd',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Code sx={{ fontSize: 80, color: '#1976d2' }} />
+              </CardMedia>
+              <CardContent>
+                <Typography variant="h5" component="h2" gutterBottom>
+                  Arquitetura Micro-Frontend
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  Implementação usando Single-SPA para orquestração de micro-frontends independentes. 
+                  Cada componente (header, sidebar, conteúdo, footer) é um microfrontend separado.
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                  <Chip label="Next.js" color="primary" size="small" />
+                  <Chip label="Single-SPA" color="secondary" size="small" />
+                  <Chip label="Material UI" color="info" size="small" />
+                </Box>
+                <Button variant="contained" color="primary">
+                  Saiba Mais
+                </Button>
+              </CardContent>
+            </Card>
+          </Box>
+
+          <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardMedia
+                component="div"
+                sx={{
+                  height: 200,
+                  backgroundColor: '#f3e5f5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Web sx={{ fontSize: 80, color: '#dc004e' }} />
+              </CardMedia>
+              <CardContent>
+                <Typography variant="h5" component="h2" gutterBottom>
+                  Tecnologias Utilizadas
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  Stack moderna com React, Next.js, Material UI e Single-SPA para criar uma experiência 
+                  de usuário rica e escalável com deployment independente.
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                  <Chip label="React" color="primary" size="small" />
+                  <Chip label="TypeScript" color="secondary" size="small" />
+                  <Chip label="Vercel" color="success" size="small" />
+                </Box>
+                <Button variant="outlined" color="secondary">
+                  Ver Código
+                </Button>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+
+        <Paper sx={{ p: 3, backgroundColor: '#f5f5f5' }}>
+          <Typography variant="h5" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Settings color="primary" />
+            Características da Aplicação
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ flex: '1 1 200px', textAlign: 'center', p: 2 }}>
+              <Typography variant="h6" color="primary">Modular</Typography>
+              <Typography variant="body2">Cada microfrontend é independente</Typography>
+            </Box>
+            <Box sx={{ flex: '1 1 200px', textAlign: 'center', p: 2 }}>
+              <Typography variant="h6" color="primary">Escalável</Typography>
+              <Typography variant="body2">Deploy independente de cada módulo</Typography>
+            </Box>
+            <Box sx={{ flex: '1 1 200px', textAlign: 'center', p: 2 }}>
+              <Typography variant="h6" color="primary">Moderno</Typography>
+              <Typography variant="body2">Tecnologias atuais e best practices</Typography>
+            </Box>
+            <Box sx={{ flex: '1 1 200px', textAlign: 'center', p: 2 }}>
+              <Typography variant="h6" color="primary">Responsivo</Typography>
+              <Typography variant="body2">Adaptável a diferentes dispositivos</Typography>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
+    </ThemeProvider>
+  )
 }
