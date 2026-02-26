@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# main-content-mf
 
-## Getting Started
+Micro-frontend de conteúdo principal construído com [Next.js](https://nextjs.org), [Material UI](https://mui.com) e [Module Federation](https://webpack.js.org/concepts/module-federation/). Este repositório é um **remote** na arquitetura de micro-frontends e expõe o componente `MainContent` para ser consumido por uma aplicação host.
 
-First, run the development server:
+## Tecnologias
+
+| Tecnologia | Versão |
+|---|---|
+| [Next.js](https://nextjs.org) | 15 |
+| [React](https://react.dev) | 19 |
+| [TypeScript](https://www.typescriptlang.org) | 5 |
+| [Material UI](https://mui.com) | 7 |
+| [Module Federation](https://github.com/module-federation/nextjs-mf) | 8 |
+| [Single-SPA](https://single-spa.js.org) | 6 |
+| [Tailwind CSS](https://tailwindcss.com) | 4 |
+
+## Arquitetura
+
+Este projeto implementa dois padrões de micro-frontend:
+
+- **Module Federation** — o componente `MainContent` é exposto via `@module-federation/nextjs-mf` e pode ser carregado dinamicamente por qualquer host que referencie a URL remota.
+- **Single-SPA** — o arquivo `src/app/microfrontend.tsx` exporta os lifecycles `bootstrap`, `mount` e `unmount` compatíveis com o orquestrador Single-SPA.
+
+## Estrutura
+
+```
+src/
+├── app/
+│   ├── layout.tsx          # Layout raiz da aplicação
+│   ├── page.tsx            # Página standalone (visualização local)
+│   ├── microfrontend.tsx   # Lifecycles Single-SPA
+│   └── globals.css
+└── components/
+    └── MainContent.tsx     # Componente principal exportado via Module Federation
+```
+
+## Pré-requisitos
+
+- [Node.js](https://nodejs.org) 18+
+- [npm](https://www.npmjs.com) 9+
+
+## Instalação
+
+```bash
+npm install
+```
+
+## Desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A aplicação sobe na porta **3003**: [http://localhost:3003](http://localhost:3003)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+## Verificação de tipos
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run type-check
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Lint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+```
 
-## Deploy on Vercel
+## Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O projeto está configurado para deploy na [Vercel](https://vercel.com). Em produção, o `assetPrefix` é definido como `/main-content-mf` e os headers CORS são habilitados para permitir o carregamento remoto pelo host.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run deploy
+```
+
+## Consumindo o remote (Module Federation)
+
+No host, configure o remote apontando para a URL pública deste serviço:
+
+```js
+// next.config.js do host
+remotes: {
+  mainContentMf: 'mainContentMf@https://<url-do-remote>/_next/static/chunks/remoteEntry.js',
+}
+```
+
+Em seguida, importe o componente de forma dinâmica:
+
+```tsx
+import dynamic from 'next/dynamic'
+
+const MainContent = dynamic(() => import('mainContentMf/MainContent'))
+```
+
+## Licença
+
+Privada.
