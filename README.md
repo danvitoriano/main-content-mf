@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# main-content-mf
 
-## Getting Started
+Micro-frontend de conteúdo principal construído com [Next.js](https://nextjs.org), [Material UI](https://mui.com) e [Module Federation](https://webpack.js.org/concepts/module-federation/). Este repositório é um **remote** na arquitetura de micro-frontends e expõe o componente `MainContent` para ser consumido dinamicamente por um shell/host.
 
-First, run the development server:
+## Visão Geral
+
+| Característica | Detalhe |
+|---|---|
+| Framework | Next.js 15 |
+| Linguagem | TypeScript |
+| UI | Material UI (MUI) v7 + Tailwind CSS v4 |
+| Micro-frontend | Single-SPA + Module Federation (`@module-federation/nextjs-mf`) |
+| Porta padrão | `3003` |
+| Deploy | Vercel |
+
+## Arquitetura
+
+Este projeto atua como um **microfrontend remoto**. O componente `MainContent` é exposto via Module Federation e pode ser carregado dinamicamente por qualquer host compatível em tempo de execução — sem necessidade de redeployar o host ao atualizar este remote.
+
+```
+Host / Shell Application
+    └── Module Federation
+            └── main-content-mf (este repositório)
+                    └── MainContent component
+```
+
+## Instalação
+
+```bash
+npm install
+```
+
+## Desenvolvimento
+
+Inicie o servidor de desenvolvimento na porta `3003`:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3003](http://localhost:3003) no navegador para visualizar a aplicação.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts Disponíveis
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script | Descrição |
+|---|---|
+| `npm run dev` | Inicia o servidor de desenvolvimento na porta 3003 |
+| `npm run build` | Gera o build de produção |
+| `npm run start` | Inicia o servidor de produção na porta 3003 |
+| `npm run lint` | Executa o ESLint |
+| `npm run type-check` | Verifica os tipos TypeScript sem emitir arquivos |
+| `npm run deploy` | Realiza o deploy na Vercel em modo produção |
 
-## Learn More
+## Estrutura do Projeto
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── layout.tsx          # Layout raiz da aplicação
+│   ├── page.tsx            # Página principal (MainContentMicroFrontend)
+│   ├── microfrontend.tsx   # Ciclos de vida do Single-SPA (bootstrap/mount/unmount)
+│   └── globals.css         # Estilos globais
+└── components/
+    └── MainContent.tsx     # Componente principal exposto via Module Federation
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Module Federation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O componente `MainContent` é exposto como um **remote** via `@module-federation/nextjs-mf`. Para consumi-lo em um host, configure o `next.config` do host apontando para a URL deste remote:
 
-## Deploy on Vercel
+```js
+// next.config.js do Host
+new NextFederationPlugin({
+  remotes: {
+    // Desenvolvimento: 'mainContentMf@http://localhost:3003/_next/static/chunks/remoteEntry.js'
+    // Produção:        'mainContentMf@https://seu-remote.vercel.app/_next/static/chunks/remoteEntry.js'
+    mainContentMf: 'mainContentMf@<URL_DO_REMOTE>/_next/static/chunks/remoteEntry.js',
+  },
+})
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Em seguida, importe o componente remotamente:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```tsx
+import dynamic from 'next/dynamic'
+
+const MainContent = dynamic(() => import('mainContentMf/MainContent'), { ssr: false })
+```
+
+## CORS
+
+A aplicação está configurada para aceitar requisições de qualquer origem (`Access-Control-Allow-Origin: *`), necessário para o carregamento remoto via Module Federation.
+
+## Deploy
+
+O deploy é feito na [Vercel](https://vercel.com). Para fazer deploy manualmente:
+
+```bash
+npm run deploy
+```
+
+Em produção, o `assetPrefix` é configurado automaticamente para `/main-content-mf` em `next.config.ts`. Isso garante que os assets do Module Federation sejam servidos com o prefixo correto pelo CDN da Vercel.
+
+## Tecnologias
+
+- [Next.js](https://nextjs.org/docs) — Framework React com suporte a SSR e App Router
+- [React](https://react.dev) — Biblioteca de UI
+- [TypeScript](https://www.typescriptlang.org) — Tipagem estática
+- [Material UI](https://mui.com) — Componentes de UI
+- [Tailwind CSS](https://tailwindcss.com) — Utilitários de CSS
+- [Single-SPA](https://single-spa.js.org) — Orquestração de micro-frontends
+- [Module Federation](https://webpack.js.org/concepts/module-federation/) — Compartilhamento de módulos em tempo de execução
